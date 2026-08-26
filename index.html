@@ -107,14 +107,9 @@ footer .f-r{color:var(--tx2);font-size:13px}
 <section id="shelf">
   <div class="sec-tag">Our Shelf</div>
   <h2 class="sec-h">光影书架</h2>
-  <p class="sec-p">把想看的电影、动漫放上同一个书架，书脊朝外写着片名和作者。谁放上、谁拿走，大家都能实时看到。</p>
-  <div class="shelf-form">
-    <input id="bname" type="text" placeholder="片名 / 动漫名，例：千与千寻">
-    <input id="bauthor" type="text" placeholder="作者，例：宫崎骏">
-    <button onclick="addBook()">放到书架</button>
-  </div>
+  <p class="sec-p">这是站长精心挑选的光影书单，书脊朝外写着片名和作者。站长更新书单后，刷新页面即可看到。</p>
   <div class="shelf" id="shelfbooks"></div>
-  <div class="shelf-tip">💡 鼠标移到书脊上，点右上角 × 可把书拿走。（存本机）</div>
+  <div class="shelf-tip">💡 当前书单由站长维护，访客只能浏览。</div>
 </section>
 
 <section id="join">
@@ -130,6 +125,7 @@ footer .f-r{color:var(--tx2);font-size:13px}
 </footer>
 <button id="toTop">↑</button>
 
+<script src="books.js"></script>
 <script>
 /* 星空 */
 const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W,H;
@@ -147,14 +143,10 @@ function searchImg(){const q=document.getElementById('iq').value.trim();if(!q){d
 document.getElementById('fq').addEventListener('keydown',e=>{if(e.key==='Enter')searchFilm();});
 document.getElementById('iq').addEventListener('keydown',e=>{if(e.key==='Enter')searchImg();});
 
-/* 光影书架 */
+/* 光影书架（站长维护·只读书单） */
 const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function loadBooks(){try{return JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){return[];}}
-function saveBooks(b){localStorage.setItem('rainBooks',JSON.stringify(b));}
-function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=loadBooks();if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
-function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}const b=loadBooks();b.push({name:n,author:(a||'佚名')});saveBooks(b);renderShelf();document.getElementById('bname').value='';document.getElementById('bauthor').value='';}
-function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
+function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=window.STATION_BOOKS||[];if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书单正在准备中，稍后刷新看看 ✨</div>';return;}c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author||'佚名')+'</span></div>').join('');}
 renderShelf();
 </script>
 </body>
