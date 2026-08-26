@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>雨后影视社 | Rain After Film</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
 <style>
 :root{--bg:#0b0e1c;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.10);--gold:#f3d67b;--gold2:#c89b3c;--cy:#4fd8d4;--vi:#8b7cf6;--tx:#e8ecf7;--tx2:#9aa3c0;}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -114,7 +114,7 @@ footer .f-r{color:var(--tx2);font-size:13px}
     <button onclick="addBook()">放到书架</button>
   </div>
   <div class="shelf" id="shelfbooks"></div>
-  <div class="shelf-tip">💡 鼠标移到书脊上，点右上角 × 可把书拿走。云端实时同步中……</div>
+  <div class="shelf-tip">💡 鼠标移到书脊上，点右上角 × 可把书拿走。（存本机）</div>
 </section>
 
 <section id="join">
@@ -147,33 +147,15 @@ function searchImg(){const q=document.getElementById('iq').value.trim();if(!q){d
 document.getElementById('fq').addEventListener('keydown',e=>{if(e.key==='Enter')searchFilm();});
 document.getElementById('iq').addEventListener('keydown',e=>{if(e.key==='Enter')searchImg();});
 
-/* 光影书架 Firebase实时版 */
+/* 光影书架 */
 const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
-let FB=false,dbRef=null,books=[];
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function colorIdx(id){let h=0;for(let i=0;i<id.length;i++){h=(h*31+id.charCodeAt(i))>>>0;}return h%scol.length;}
-function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;if(!books.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=books.map(x=>'<div class="book" style="background:'+scol[colorIdx(x.id)]+'"><button class="del" onclick="delBook(\\''+x.id+'\\')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
-try{
- if(typeof firebase!=='undefined'){
-  firebase.initializeApp({apiKey:"AIzaSyANe-B5ePLp8elhAPKYgGFPd7Gz6fDuNQI",authDomain:"yuqins37.firebaseapp.com",projectId:"yuqins37",storageBucket:"yuqins37.firebasestorage.app",messagingSenderId:"134336384231",appId:"1:134336384231:web:4c10f912be11dcd386e642",databaseURL:"https://yuqins37-default-rtdb.firebaseio.com"});
-  FB=true;
-  dbRef=firebase.database().ref('books');
-  dbRef.on('value',sn=>{const v=sn.val();books=v?Object.keys(v).map(k=>({id:k,name:(v[k].name||''),author:(v[k].author||'佚名')})):[];renderShelf();});
- }
-}catch(e){FB=false;}
-if(!FB){
- let local=[];try{local=JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){local=[];}
- books=local.map(x=>({id:x.id||('b'+Math.random().toString(36).slice(2,7)),name:x.name,author:x.author||'佚名'}));
- const t=document.querySelector('.shelf-tip');if(t)t.textContent='💡 云端暂未连接，先存在本机。';
- renderShelf();
-}
-function pushLocal(){try{localStorage.setItem('rainBooks',JSON.stringify(books));}catch(e){}}
-function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}
- if(FB){dbRef.push({name:n,author:(a||'佚名')}).catch(()=>{});}
- else{books.push({id:('b'+Math.random().toString(36).slice(2,7)),name:n,author:(a||'佚名')});pushLocal();renderShelf();}
- document.getElementById('bname').value='';document.getElementById('bauthor').value='';
-}
-function delBook(id){if(FB){dbRef.child(id).remove().catch(()=>{});}else{books=books.filter(x=>x.id!==id);pushLocal();renderShelf();}}
+function loadBooks(){try{return JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){return[];}}
+function saveBooks(b){localStorage.setItem('rainBooks',JSON.stringify(b));}
+function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=loadBooks();if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
+function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}const b=loadBooks();b.push({name:n,author:(a||'佚名')});saveBooks(b);renderShelf();document.getElementById('bname').value='';document.getElementById('bauthor').value='';}
+function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
+renderShelf();
 </script>
 </body>
 </html>
