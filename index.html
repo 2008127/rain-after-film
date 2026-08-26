@@ -69,24 +69,15 @@ footer .f-r{color:var(--tx2);font-size:13px}
 #toTop.show{opacity:1}
 .lg img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 
-/* 光影书架 共享版 */
+/* 光影书架 */
 const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
-const SHARE_URL='https://jsonblob.com/api/jsonBlob';
-let shelfId=null, books=[];
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function getShelfId(){const h=location.hash.replace('#','');if(h&&h.length>6)return h;return null;}
-function setShelfId(id){try{history.replaceState(null,'','#'+id);}catch(e){} try{localStorage.setItem('rainShelfId',id);}catch(e){} }
-async function jget(url){try{const r=await fetch(url);if(r.ok)return await r.json();return null;}catch(e){return null;}}
-async function jput(url,obj){try{const r=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj)});return r.ok;}catch(e){return false;}}
-function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;if(!books.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=books.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
-async function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}books.push({name:n,author:(a||'佚名')});renderShelf();await jput(SHARE_URL+'/'+shelfId,{books:books});document.getElementById('bname').value='';document.getElementById('bauthor').value='';}
-async function delBook(i){books.splice(i,1);renderShelf();if(shelfId)await jput(SHARE_URL+'/'+shelfId,{books:books});}
-async function initShelf(){const fromHash=getShelfId();if(fromHash){shelfId=fromHash;setShelfId(fromHash);const d=await jget(SHARE_URL+'/'+shelfId);if(d&&d.books)books=d.books;else books=[];}
- else{const local=JSON.parse(localStorage.getItem('rainBooks')||'[]');try{const r=await fetch(SHARE_URL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({books:local})});if(r.ok){const loc=r.headers.get('Location');shelfId=loc?loc.split('/').pop():null;if(shelfId){setShelfId(shelfId);books=local;await jput(SHARE_URL+'/'+shelfId,{books:books});}}else{books=local;}}catch(e){books=local;}}
- renderShelf();
- setInterval(async()=>{if(!shelfId)return;const d=await jget(SHARE_URL+'/'+shelfId);if(d&&d.books&&JSON.stringify(d.books)!==JSON.stringify(books)){books=d.books;renderShelf();}},4000);
-}
-initShelf();
+function loadBooks(){try{return JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){return[];}}
+function saveBooks(b){localStorage.setItem('rainBooks',JSON.stringify(b));}
+function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=loadBooks();if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
+function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}const b=loadBooks();b.push({name:n,author:(a||'佚名')});saveBooks(b);renderShelf();document.getElementById('bname').value='';document.getElementById('bauthor').value='';}
+function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
+renderShelf();
   document.getElementById('bname').value='';document.getElementById('bauthor').value='';
 }
 function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
