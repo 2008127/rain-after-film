@@ -68,6 +68,21 @@ footer .f-r{color:var(--tx2);font-size:13px}
 #toTop{position:fixed;right:26px;bottom:26px;z-index:60;width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(8px);color:var(--gold);font-size:20px;cursor:pointer;opacity:0;transition:.3s}
 #toTop.show{opacity:1}
 .lg img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+
+/* 光影书架 */
+.shelf-form{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.shelf-form input{flex:1;min-width:140px;padding:12px 16px;border-radius:30px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);font-size:14px;outline:none}
+.shelf-form input:focus{border-color:var(--gold)}
+.shelf-form button{padding:0 26px;border-radius:30px;border:none;background:linear-gradient(120deg,var(--gold),var(--gold2));color:#241a00;font-weight:700;cursor:pointer;transition:.3s}
+.shelf-form button:hover{filter:brightness(1.1)}
+.shelf{display:flex;gap:10px;padding:18px 18px 22px;overflow-x:auto;background:linear-gradient(180deg,#3a2b1c,#241807);border-radius:18px;border:1px solid var(--line);min-height:252px;align-items:flex-end}
+.book{position:relative;width:56px;min-width:56px;height:190px;border-radius:4px 4px 0 0;padding:12px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;cursor:pointer;box-shadow:inset -7px 0 12px rgba(0,0,0,.28)}
+.book .bt{writing-mode:vertical-rl;text-orientation:mixed;font-size:13px;font-weight:700;color:#fff;text-align:center;max-height:138px;overflow:hidden;margin-bottom:12px}
+.book .ba{writing-mode:vertical-rl;font-size:10px;color:rgba(255,255,255,.85);margin-bottom:2px;max-height:90px;overflow:hidden}
+.book .del{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:12px;line-height:20px;text-align:center;opacity:0;transition:.2s;border:none;cursor:pointer}
+.book:hover .del{opacity:1}
+.shelf-tip{color:var(--tx2);font-size:12px;margin-top:12px}
+
 </style>
 </head>
 <body>
@@ -123,6 +138,20 @@ footer .f-r{color:var(--tx2);font-size:13px}
   </div>
 </section>
 
+<section id="shelf">
+  <div class="sec-tag">Our Shelf</div>
+  <h2 class="sec-h">光影书架</h2>
+  <p class="sec-p">把想看的电影、动漫放上同一个书架，书脊朝外写着片名和作者。添加后，这本书会立刻摆上书架。</p>
+  <div class="shelf-form">
+    <input id="bname" type="text" placeholder="片名 / 动漫名，例：千与千寻">
+    <input id="bauthor" type="text" placeholder="作者，例：宫崎骏">
+    <button onclick="addBook()">放到书架</button>
+  </div>
+  <div class="shelf" id="shelfbooks"></div>
+  <div class="shelf-tip">💡 鼠标移到书脊上，点右上角 × 可把书拿走。</div>
+</section>
+
+
 <section id="join">
   <div class="sec-tag">Join Us</div>
   <h2 class="sec-h">雨落之后，等你入席</h2>
@@ -165,6 +194,28 @@ function searchImage(){
 }
 document.getElementById('fmovie').addEventListener('keydown',e=>e.key==='Enter'&&searchMovie());
 document.getElementById('fimage').addEventListener('keydown',e=>e.key==='Enter'&&searchImage());
+
+/* 光影书架 */
+const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
+function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function loadBooks(){try{return JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){return[];}}
+function saveBooks(b){localStorage.setItem('rainBooks',JSON.stringify(b));}
+function renderShelf(){
+  const c=document.getElementById('shelfbooks');if(!c)return;
+  const b=loadBooks();
+  if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}
+  c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');
+}
+function addBook(){
+  const n=document.getElementById('bname').value.trim();
+  const a=document.getElementById('bauthor').value.trim();
+  if(!n){document.getElementById('bname').focus();return;}
+  const b=loadBooks();b.push({name:n,author:(a||'佚名')});saveBooks(b);renderShelf();
+  document.getElementById('bname').value='';document.getElementById('bauthor').value='';
+}
+function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
+renderShelf();
+
 </script>
 </body>
 </html>
