@@ -118,7 +118,7 @@ footer .f-r{color:var(--tx2);font-size:13px}
       <h3>🖼️ 图片检索</h3>
       <div class="m-sub">输入关键词，跳到壁纸站搜索（壁纸 / 动漫 / 风景）</div>
       <div class="sbar"><input id="fimage" type="text" placeholder="例如：星空、猫咪、动漫少女…"><button onclick="searchImage()">检索</button></div>
-      <div class="hint">数据来自 <b>哲风壁纸</b>。想直接逛图库，<a href="https://haowallpaper.com/" target="_blank" rel="noopener"><b>点这里</b></a>。</div>
+      <div class="hint">可搜全网高清图片。想专逛壁纸图库，<a href="https://haowallpaper.com/" target="_blank" rel="noopener"><b>去哲风壁纸</b></a>。</div>
     </div>
   </div>
 </section>
@@ -161,7 +161,7 @@ function searchImage(){
   const el=document.getElementById('fimage');
   const q=(el?el.value:'').trim();
   if(!q){el&&el.focus();return;}
-  go('https://haowallpaper.com/search?keyword='+encodeURIComponent(q));
+  go('https://cn.bing.com/images/search?q='+encodeURIComponent(q));
 }
 document.getElementById('fmovie').addEventListener('keydown',e=>e.key==='Enter'&&searchMovie());
 document.getElementById('fimage').addEventListener('keydown',e=>e.key==='Enter'&&searchImage());
