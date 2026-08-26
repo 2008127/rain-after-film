@@ -4,26 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>雨后影视社 | Rain After Film</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-:root{
-  --bg:#0b0e1c; --card:rgba(255,255,255,.05);
-  --line:rgba(255,255,255,.10); --gold:#f3d67b; --gold2:#c89b3c;
-  --cy:#4fd8d4; --vi:#8b7cf6; --tx:#e8ecf7; --tx2:#9aa3c0;
-}
+:root{--bg:#0b0e1c;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.10);--gold:#f3d67b;--gold2:#c89b3c;--cy:#4fd8d4;--vi:#8b7cf6;--tx:#e8ecf7;--tx2:#9aa3c0;}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
 canvas#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
 .wrap{position:relative;z-index:2}
 a{text-decoration:none;color:inherit}
-
 nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 5vw;display:flex;align-items:center;gap:16px;background:rgba(11,14,28,.55);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:1px}
-.logo .lg{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--vi));display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(243,214,123,.5);flex:none}
+.logo .lg{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--vi));display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(243,214,123,.5);flex:none;overflow:hidden}
 .logo .lg svg{width:24px;height:24px;fill:#241a00}
+.logo .lg img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 .logo span em{color:var(--gold);font-style:normal}
 .nav-r{margin-left:auto;display:flex;gap:26px;font-size:15px;color:var(--tx2);flex-wrap:wrap}
 .nav-r a:hover{color:var(--gold)}
-
 .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 5vw;position:relative}
 .hero .kicker{letter-spacing:6px;color:var(--cy);text-transform:uppercase;font-size:14px;margin-bottom:18px;opacity:.9}
 .hero h1{font-size:clamp(46px,9vw,110px);font-weight:800;line-height:1.05;letter-spacing:2px;margin-bottom:22px;background:linear-gradient(100deg,#fff,#f3d67b 55%,#8b7cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -34,19 +31,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 5vw;display:flex
 .btn.gold{background:linear-gradient(120deg,var(--gold),var(--gold2));color:#241a00;box-shadow:0 8px 28px rgba(200,155,60,.35)}
 .btn.ghost{border-color:var(--line);color:var(--tx);background:var(--card);backdrop-filter:blur(6px)}
 .btn:hover{transform:translateY(-3px)}
-
 section{padding:90px 6vw;position:relative}
 .sec-tag{color:var(--gold);letter-spacing:4px;font-size:13px;text-transform:uppercase;margin-bottom:8px}
 .sec-h{font-size:clamp(30px,5vw,46px);font-weight:800;margin-bottom:14px}
 .sec-p{color:var(--tx2);max-width:660px;line-height:1.75;margin-bottom:40px}
-
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
-.card{background:linear-gradient(160deg,var(--card),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:22px;padding:30px;transition:.35s;backdrop-filter:blur(8px)}
-.card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 20px 50px rgba(139,124,246,.16)}
-.card .ic{font-size:34px;margin-bottom:16px}
-.card h3{font-size:20px;margin-bottom:10px}
-.card p{color:var(--tx2);font-size:14px;line-height:1.7}
-
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
 @media(max-width:900px){.mod-grid{grid-template-columns:1fr}}
 .mod{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.01));border:1px solid var(--line);border-radius:26px;padding:30px;backdrop-filter:blur(10px)}
@@ -59,30 +47,133 @@ section{padding:90px 6vw;position:relative}
 .sbar button:hover{filter:brightness(1.1)}
 .hint{color:var(--tx2);font-size:12px;line-height:1.6;padding:14px;border:1px dashed var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
 .hint b{color:var(--gold)}
-
+.shelf-form{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.shelf-form input{flex:1;min-width:140px;padding:12px 16px;border-radius:30px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);font-size:14px;outline:none}
+.shelf-form input:focus{border-color:var(--gold)}
+.shelf-form button{padding:0 26px;border-radius:30px;border:none;background:linear-gradient(120deg,var(--gold),var(--gold2));color:#241a00;font-weight:700;cursor:pointer;transition:.3s}
+.shelf-form button:hover{filter:brightness(1.1)}
+.shelf{display:flex;gap:10px;padding:18px 18px 22px;overflow-x:auto;background:linear-gradient(180deg,#3a2b1c,#241807);border-radius:18px;border:1px solid var(--line);min-height:252px;align-items:flex-end}
+.book{position:relative;width:56px;min-width:56px;height:190px;border-radius:4px 4px 0 0;padding:12px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;cursor:pointer;box-shadow:inset -7px 0 12px rgba(0,0,0,.28)}
+.book .bt{writing-mode:vertical-rl;text-orientation:mixed;font-size:13px;font-weight:700;color:#fff;text-align:center;max-height:138px;overflow:hidden;margin-bottom:12px}
+.book .ba{writing-mode:vertical-rl;font-size:10px;color:rgba(255,255,255,.85);margin-bottom:2px;max-height:90px;overflow:hidden}
+.book .del{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:12px;line-height:20px;text-align:center;opacity:0;transition:.2s;border:none;cursor:pointer}
+.book:hover .del{opacity:1}
+.shelf-tip{color:var(--tx2);font-size:12px;margin-top:12px}
 footer{border-top:1px solid var(--line);padding:50px 6vw;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;background:rgba(16,21,40,.4)}
 footer .f-l{display:flex;align-items:center;gap:12px}
-footer .lg{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--vi));display:flex;align-items:center;justify-content:center;flex:none}
+footer .lg{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--vi));display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
 footer .lg svg{width:22px;height:22px;fill:#241a00}
+footer .lg img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 footer .f-r{color:var(--tx2);font-size:13px}
 #toTop{position:fixed;right:26px;bottom:26px;z-index:60;width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(8px);color:var(--gold);font-size:20px;cursor:pointer;opacity:0;transition:.3s}
 #toTop.show{opacity:1}
-.lg img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="wrap">
+<nav>
+  <div class="logo"><span class="lg"><svg viewBox="0 0 24 24"><path d="M9 3l1.2-2h3.6L15 3h4a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4zm3 5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></span><span>雨后影视社 <em>Rain After Film</em></span></div>
+  <div class="nav-r"><a href="#film">光影检索</a><a href="#shelf">光影书架</a><a href="#join">一起去</a></div>
+</nav>
 
-/* 光影书架 */
+<section class="hero" id="top">
+  <div class="kicker">RAIN AFTER FILM</div>
+  <h1>雨后影视社</h1>
+  <p class="sub">用镜头收藏雨后每一道光。<b>找片、找图、放上书架</b>，和朋友们一起收藏值得看的光影。</p>
+  <div class="btn-row"><a class="btn gold" href="#film">开始检索</a><a class="btn ghost" href="#shelf">逛逛书架</a></div>
+</section>
+
+<section id="film">
+  <div class="sec-tag">Search</div>
+  <h2 class="sec-h">光影检索台</h2>
+  <p class="sec-p">填一个关键词，电影 / 动漫直接去 SeedHub 找，壁纸 / 图片去必应搜。想逛图库还能去哲风壁纸。</p>
+  <div class="mod-grid">
+    <div class="mod">
+      <h3>🎬 电影 · 动漫</h3>
+      <div class="m-sub">去 SeedHub 搜片名，一键直达</div>
+      <div class="sbar"><input id="fq" placeholder="片名 / 动漫名，例：千与千寻"><button onclick="searchFilm()">检索影视</button></div>
+      <div class="hint">点「检索影视」会打开 SeedHub 的搜索结果页，找到就能点进去看。</div>
+    </div>
+    <div class="mod">
+      <h3>🖼️ 图片 · 壁纸</h3>
+      <div class="m-sub">全网高清图，也能去哲风壁纸逛逛</div>
+      <div class="sbar"><input id="iq" placeholder="想找的图，例：星空"><button onclick="searchImg()">检索图片</button></div>
+      <div class="hint">可搜全网高清图片。想逛它们的图库，<a href="https://haowallpaper.com/" target="_blank" style="color:var(--gold)">去哲风壁纸</a> 瞧瞧。</div>
+    </div>
+  </div>
+</section>
+
+<section id="shelf">
+  <div class="sec-tag">Our Shelf</div>
+  <h2 class="sec-h">光影书架</h2>
+  <p class="sec-p">把想看的电影、动漫放上同一个书架，书脊朝外写着片名和作者。谁放上、谁拿走，大家都能实时看到。</p>
+  <div class="shelf-form">
+    <input id="bname" type="text" placeholder="片名 / 动漫名，例：千与千寻">
+    <input id="bauthor" type="text" placeholder="作者，例：宫崎骏">
+    <button onclick="addBook()">放到书架</button>
+  </div>
+  <div class="shelf" id="shelfbooks"></div>
+  <div class="shelf-tip">💡 鼠标移到书脊上，点右上角 × 可把书拿走。云端实时同步中……</div>
+</section>
+
+<section id="join">
+  <div class="sec-tag">Join Us</div>
+  <h2 class="sec-h">和朋友们一起去</h2>
+  <p class="sec-p">把链接发给朋友，所有人都能检索同一片片、往同一个书架上放自己收藏的光影。</p>
+</section>
+</div>
+
+<footer>
+  <div class="f-l"><span class="lg"><svg viewBox="0 0 24 24"><path d="M9 3l1.2-2h3.6L15 3h4a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4zm3 5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></span><span>雨后影视社 · Rain After Film</span></div>
+  <div class="f-r">用镜头收藏雨后每一道光</div>
+</footer>
+<button id="toTop">↑</button>
+
+<script>
+/* 星空 */
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W,H;
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+rs();addEventListener('resize',rs);
+const stars=Array.from({length:120},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.2,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12}));
+function loop(){cx.clearRect(0,0,W,H);for(const s of stars){s.x+=s.vx;s.y+=s.vy;if(s.x<0)s.x=W;if(s.x>W)s.x=0;if(s.y<0)s.y=H;if(s.y>H)s.y=0;cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle='rgba(232,236,247,.7)';cx.fill();}requestAnimationFrame(loop);}
+loop();
+/* toTop */
+const toTop=document.getElementById('toTop');addEventListener('scroll',()=>{toTop.classList.toggle('show',scrollY>600);});toTop.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+/* 检索 */
+function searchFilm(){const q=document.getElementById('fq').value.trim();if(!q){document.getElementById('fq').focus();return;}window.open('https://seedog.cc/s/'+encodeURIComponent(q)+'/','_blank');}
+function searchImg(){const q=document.getElementById('iq').value.trim();if(!q){document.getElementById('iq').focus();return;}window.open('https://cn.bing.com/images/search?q='+encodeURIComponent(q),'_blank');}
+document.getElementById('fq').addEventListener('keydown',e=>{if(e.key==='Enter')searchFilm();});
+document.getElementById('iq').addEventListener('keydown',e=>{if(e.key==='Enter')searchImg();});
+
+/* 光影书架 Firebase实时版 */
 const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
+let FB=false,dbRef=null,books=[];
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function loadBooks(){try{return JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){return[];}}
-function saveBooks(b){localStorage.setItem('rainBooks',JSON.stringify(b));}
-function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=loadBooks();if(!b.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=b.map((x,i)=>'<div class="book" style="background:'+scol[i%scol.length]+'"><button class="del" onclick="delBook('+i+')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
-function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}const b=loadBooks();b.push({name:n,author:(a||'佚名')});saveBooks(b);renderShelf();document.getElementById('bname').value='';document.getElementById('bauthor').value='';}
-function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
-renderShelf();
-  document.getElementById('bname').value='';document.getElementById('bauthor').value='';
+function colorIdx(id){let h=0;for(let i=0;i<id.length;i++){h=(h*31+id.charCodeAt(i))>>>0;}return h%scol.length;}
+function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;if(!books.length){c.innerHTML='<div style="color:#9aa3c0;align-self:center;">书架还空着，来放第一本书吧 ✨</div>';return;}c.innerHTML=books.map(x=>'<div class="book" style="background:'+scol[colorIdx(x.id)]+'"><button class="del" onclick="delBook(\\''+x.id+'\\')">×</button><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author)+'</span></div>').join('');}
+try{
+ if(typeof firebase!=='undefined'){
+  firebase.initializeApp({apiKey:"AIzaSyANe-B5ePLp8elhAPKYgGFPd7Gz6fDuNQI",authDomain:"yuqins37.firebaseapp.com",projectId:"yuqins37",storageBucket:"yuqins37.firebasestorage.app",messagingSenderId:"134336384231",appId:"1:134336384231:web:4c10f912be11dcd386e642",databaseURL:"https://yuqins37-default-rtdb.firebaseio.com"});
+  FB=true;
+  dbRef=firebase.database().ref('books');
+  dbRef.on('value',sn=>{const v=sn.val();books=v?Object.keys(v).map(k=>({id:k,name:(v[k].name||''),author:(v[k].author||'佚名')})):[];renderShelf();});
+ }
+}catch(e){FB=false;}
+if(!FB){
+ let local=[];try{local=JSON.parse(localStorage.getItem('rainBooks')||'[]');}catch(e){local=[];}
+ books=local.map(x=>({id:x.id||('b'+Math.random().toString(36).slice(2,7)),name:x.name,author:x.author||'佚名'}));
+ const t=document.querySelector('.shelf-tip');if(t)t.textContent='💡 云端暂未连接，先存在本机。';
+ renderShelf();
 }
-function delBook(i){const b=loadBooks();b.splice(i,1);saveBooks(b);renderShelf();}
-renderShelf();
-
+function pushLocal(){try{localStorage.setItem('rainBooks',JSON.stringify(books));}catch(e){}}
+function addBook(){const n=document.getElementById('bname').value.trim();const a=document.getElementById('bauthor').value.trim();if(!n){document.getElementById('bname').focus();return;}
+ if(FB){dbRef.push({name:n,author:(a||'佚名')}).catch(()=>{});}
+ else{books.push({id:('b'+Math.random().toString(36).slice(2,7)),name:n,author:(a||'佚名')});pushLocal();renderShelf();}
+ document.getElementById('bname').value='';document.getElementById('bauthor').value='';
+}
+function delBook(id){if(FB){dbRef.child(id).remove().catch(()=>{});}else{books=books.filter(x=>x.id!==id);pushLocal();renderShelf();}}
 </script>
 </body>
 </html>
