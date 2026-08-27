@@ -284,7 +284,7 @@ footer .f-r{color:var(--tx3);font-size:13px}
       <h2 class="sec-h" style="margin-bottom:6px">光影书架</h2>
       <p class="sec-p" style="margin:0">站长精心挑选的电影 / 动漫，摆上同一个书架。书脊朝外，写着片名与原作者。</p>
     </div>
-    <button class="admin-btn" onclick="openAdmin()">🔑 站长管理</button>
+    <button class="admin-btn" onclick="openAdmin()" style="display:none">🔑 站长管理</button>
   </div>
   <div class="shelf" id="shelfbooks"></div>
   <div class="shelf-tip">书单由站长维护，所有人打开都能看到同一面书架 🌧️✨</div>
@@ -542,6 +542,10 @@ async function saveEdit(){
   st.style.color='var(--acc)';
   renderMList();
 }
+
+
+const ADM_KEY='rain2026';
+(function(){const q=location.search.match(/(?:^|[?&])admin=([^&#]+)/);if(q&&decodeURIComponent(q[1])===ADM_KEY){const b=document.querySelector('.admin-btn');if(b)b.style.display='';}})();
 
 </script>
 </body>
