@@ -225,7 +225,8 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 #secMenu.open .sm-item:nth-child(4){transition-delay:.26s}
 .sm-item:hover{color:#fff;padding-left:8px}
 /* 毒液蔓延覆盖 */
-#venom{position:fixed;inset:0;z-index:170;background:#0a0a0c;pointer-events:none;opacity:0}
+#venom{position:fixed;inset:0;z-index:170;background:transparent;pointer-events:none;opacity:0;visibility:hidden}
+#venom .wb{position:absolute;background:#0a0a0c;border-radius:42%58%55%45%/55%44%56%45%;transform:translate(-50%,-50%) scale(0);will-change:transform}
 .sm-list{padding-top:16vh}.ic-btn{width:30px;height:30px}}
 
 /* 移轴进入动画 */
@@ -617,21 +618,38 @@ function closeMenu(){if(smEl)smEl.classList.remove('open');}
 function gotoPanel(sel,el){
  var v=document.getElementById('venom');
  var src=el||document.getElementById('menuBtn');
- var r=src?src.getBoundingClientRect():{left:innerWidth-30,top:20};
+ var r=src?src.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2};
  var x=r.left+r.width/2,y=r.top+r.height/2;
- v.style.transition='none';v.style.opacity='1';v.style.clipPath='circle(0px at '+x+'px '+y+'px)';
- closeMenu();
+ v.innerHTML='';
+ v.style.opacity='1';v.style.visibility='visible';v.style.transition='none';
+ var blobs=[
+  {w:520,rot:0,scale:4,delay:0},
+  {w:520,rot:110,scale:4.7,delay:70},
+  {w:540,rot:220,scale:5.4,delay:140},
+  {w:560,rot:320,scale:6.2,delay:210}
+ ];
+ blobs.forEach(function(b,i){
+  var d=document.createElement('div');d.className='wb';
+  d.style.left=x+'px';d.style.top=y+'px';
+  d.style.width=b.w+'px';d.style.height=b.w+'px';
+  d.style.transform='translate(-50%,-50%) rotate('+b.rot+'deg) scale(0)';
+  v.appendChild(d);
+ });
  void v.offsetWidth;
- v.style.transition='clip-path .65s cubic-bezier(.4,0,.2,1)';
- v.style.clipPath='circle(150% at '+x+'px '+y+'px)';
+ var els=v.querySelectorAll('.wb');
+ blobs.forEach(function(b,i){
+  els[i].style.transform='translate(-50%,-50%) rotate('+(b.rot+50)+'deg) scale('+b.scale+')';
+  els[i].style.transition='transform 1.15s cubic-bezier(.4,0,.2,1) '+b.delay+'ms';
+ });
  setTimeout(function(){
+  closeMenu();
   var f=document.getElementById('films'),sh=document.getElementById('shelf');
   if(sel==='#films'||sel==='#images'){sh.classList.remove('show');f.classList.add('show');}
   else if(sel==='#shelf'){f.classList.remove('show');sh.classList.add('show');}
-  else {f.classList.remove('show');sh.classList.remove('show');var el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:'smooth'});}
-  if((sel==='#films'||sel==='#images')){var tar=document.getElementById(sel.slice(1));if(sel==='#images'&&tar)tar.scrollIntoView();else if(sel==='#films')window.scrollTo(0,0);}
- },480);
- setTimeout(function(){v.style.opacity='0';},1250);
+  else {f.classList.remove('show');sh.classList.remove('show');var el2=document.querySelector(sel);if(el2)el2.scrollIntoView({behavior:'smooth'});}
+  if(sel==='#films'||sel==='#images'){var tar=document.getElementById(sel.slice(1));if(sel==='#images'&&tar)tar.scrollIntoView();else if(sel==='#films')window.scrollTo(0,0);}
+ },620);
+ setTimeout(function(){v.style.opacity='0';v.style.visibility='hidden';v.innerHTML='';},1350);
 }
 function goSearch(){gotoPanel('#films');}
 function goStar(){gotoPanel('#shelf');}
