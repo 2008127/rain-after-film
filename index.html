@@ -182,7 +182,7 @@ footer .f-r{color:var(--tx3);font-size:13px}
 
 
 /* 灰纹底（整体底色） */
-body{background-color:#33363c;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.16) 1px,transparent 1px);background-size:46px 46px,46px 46px,23px 23px,23px 23px}
+body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 10px)}
 /* 水玻璃黑透导航 */
 #nav{position:fixed;top:0;left:0;right:0;z-index:90;background:rgba(10,10,12,.86);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.05)}
 .navin{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:52px}
@@ -208,20 +208,22 @@ body{background-color:#33363c;background-image:linear-gradient(rgba(255,255,255,
 .icons{display:flex;gap:6px;align-items:center}
 .ic-btn{width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:rgba(255,255,255,.72);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
 .ic-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
-#secMenu{position:fixed;inset:0;z-index:160;background:rgba(8,8,10,.97);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
-#secMenu.open{opacity:1;visibility:visible}
-.sm-close{position:absolute;top:14px;right:5vw;width:36px;height:36px;border:none;background:transparent;color:rgba(255,255,255,.85);font-size:26px;line-height:1;cursor:pointer;transition:.2s}
+/* 右侧小菜单 */
+#secMenu{position:fixed;top:0;right:0;bottom:0;width:78%;max-width:300px;z-index:160;background:rgba(12,12,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transform:translateX(100%);transition:transform .4s cubic-bezier(.22,1,.36,1);box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+#secMenu.open{transform:translateX(0)}
+.sm-close{position:absolute;top:16px;right:18px;width:32px;height:32px;border:none;background:transparent;color:rgba(255,255,255,.8);font-size:22px;line-height:1;cursor:pointer}
 .sm-close:hover{color:#fff}
-.sm-list{max-width:880px;margin:0 auto;padding:18vh 6vw 0;display:flex;flex-direction:column;gap:4px}
-.sm-item{display:block;color:#d1d1d3;font-size:25px;font-weight:500;letter-spacing:.3px;text-decoration:none;padding:13px 0;opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .55s cubic-bezier(.22,1,.36,1)}
-#secMenu.open .sm-item{opacity:1;transform:translateY(0)}
-#secMenu.open .sm-item:nth-child(1){transition-delay:.05s}
-#secMenu.open .sm-item:nth-child(2){transition-delay:.10s}
-#secMenu.open .sm-item:nth-child(3){transition-delay:.15s}
-#secMenu.open .sm-item:nth-child(4){transition-delay:.20s}
-#secMenu.open .sm-item:nth-child(5){transition-delay:.25s}
-.sm-item:hover{color:#fff;transform:translateX(6px)}
-@media(max-width:640px){.sm-item{font-size:21px}.sm-list{padding-top:16vh}.ic-btn{width:30px;height:30px}}
+.sm-list{display:flex;flex-direction:column;padding:22vh 28px 0;gap:4px}
+.sm-item{color:#e7e7ea;font-size:20px;font-weight:500;letter-spacing:.5px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;opacity:0;transform:translateX(24px);transition:opacity .4s ease,transform .45s cubic-bezier(.22,1,.36,1),color .2s,padding .2s}
+#secMenu.open .sm-item{opacity:1;transform:translateX(0)}
+#secMenu.open .sm-item:nth-child(1){transition-delay:.08s}
+#secMenu.open .sm-item:nth-child(2){transition-delay:.14s}
+#secMenu.open .sm-item:nth-child(3){transition-delay:.20s}
+#secMenu.open .sm-item:nth-child(4){transition-delay:.26s}
+.sm-item:hover{color:#fff;padding-left:8px}
+/* 毒液蔓延覆盖 */
+#venom{position:fixed;inset:0;z-index:170;background:#0a0a0c;pointer-events:none;opacity:0}
+.sm-list{padding-top:16vh}.ic-btn{width:30px;height:30px}}
 
 /* 移轴进入动画 */
 .tilt{opacity:0;transform:translateY(46px) scale(.97);transition:opacity .65s ease,transform .85s cubic-bezier(.22,1,.36,1)}
@@ -248,6 +250,16 @@ body{background-color:#33363c;background-image:linear-gradient(rgba(255,255,255,
 </div>
   </div>
 </nav>
+<div id="venom"></div>
+<div id="secMenu">
+ <button class="sm-close" onclick="closeMenu()" aria-label="关闭">×</button>
+ <div class="sm-list">
+ <a class="sm-item" onclick="gotoPanel('#films');return false">✧ 影视检索</a>
+ <a class="sm-item" onclick="gotoPanel('#images');return false">✧ 壁纸检索</a>
+ <a class="sm-item" onclick="gotoPanel('#shelf');return false">✧ 光影书架</a>
+ <a class="sm-item" onclick="gotoPanel('#top');return false">✧ 返回主页</a>
+ </div>
+</div>
 <audio id="bgm" loop preload="none"></audio>
 
 <!-- 一级 · 介绍 -->
@@ -591,8 +603,26 @@ var navEl=document.getElementById('nav');
 var smEl=document.getElementById('secMenu');
 function openMenu(){if(smEl)smEl.classList.add('open');}
 function closeMenu(){if(smEl)smEl.classList.remove('open');}
-function goSearch(){var el=document.getElementById('films');if(el)el.scrollIntoView({behavior:'smooth'});}
-function goStar(){var el=document.getElementById('shelf');if(el)el.scrollIntoView({behavior:'smooth'});}
+function gotoPanel(sel){
+ var v=document.getElementById('venom');
+ var btnEl=document.getElementById('menuBtn');
+ var r=btnEl?btnEl.getBoundingClientRect():{left:innerWidth-30,top:20};
+ var x=r.left+r.width/2,y=r.top+r.height/2;
+ v.style.transition='none';v.style.opacity='1';v.style.clipPath='circle(0px at '+x+'px '+y+'px)';
+ closeMenu();
+ void v.offsetWidth;
+ v.style.transition='clip-path .65s cubic-bezier(.4,0,.2,1)';
+ v.style.clipPath='circle(150% at '+x+'px '+y+'px)';
+ setTimeout(function(){var el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:'smooth'});},480);
+ setTimeout(function(){v.style.opacity='0';},1250);
+}
+function goSearch(){gotoPanel('#films');}
+function goStar(){gotoPanel('#shelf');}
+/* 右滑打开菜单 */
+var _tx=0,_ty=0;
+document.addEventListener('touchstart',function(e){_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-_tx,dy=e.changedTouches[0].clientY-_ty;if(dx>70&&Math.abs(dy)<60)openMenu();},{passive:true});
+);}
 function updNav(){if(navEl)navEl.classList.toggle('at-top',window.scrollY<40);}
 addEventListener('scroll',updNav);if(document.readyState!=='loading')updNav();else document.addEventListener('DOMContentLoaded',updNav);
 function toggleMusic(e){if(e)e.stopPropagation();const a=document.getElementById('bgm'),b=document.querySelector('.lg');
