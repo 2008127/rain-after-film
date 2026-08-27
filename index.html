@@ -226,10 +226,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 .sm-item:hover{color:#fff;padding-left:8px}
 /* 毒液蔓延覆盖 */
 #venom{position:fixed;inset:0;z-index:170;pointer-events:none;opacity:0;visibility:hidden}
-#venom .water{position:absolute;top:0;bottom:0;left:0;right:0;background:#0a0a0c;transform:translateX(101%);will-change:transform}
-#venom .water.wave{transform:translateX(0)}
-#venom .wavef{position:absolute;top:-2px;bottom:-2px;left:-38px;width:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M40 0 L40 40 L8 40 C 14 36 20 33 14 28 C 9 24 18 22 12 17 C 7 13 16 12 11 7 C 6 3 14 5 10 0 Z' fill='%230a0a0c'/%3E%3C/svg%3E") repeat-y;will-change:transform}
-#venom .water.wave .wavef{transition:transform .4s ease}
+#venom .rd{position:absolute;border-radius:50%;background:#0a0a0c;will-change:transform}
 .sm-list{padding-top:16vh}.ic-btn{width:30px;height:30px}}
 
 /* 移轴进入动画 */
@@ -263,7 +260,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 </div>
   </div>
 </nav>
-<div id="venom"><div class="water"><span class="wavef"></span></div></div>
+<div id="venom"></div>
 <div id="secMenu">
  <button class="sm-close" onclick="closeMenu()" aria-label="关闭">×</button>
  <div class="sm-list">
@@ -620,15 +617,28 @@ function openMenu(){if(smEl)smEl.classList.add('open');}
 function closeMenu(){if(smEl)smEl.classList.remove('open');}
 function gotoPanel(sel,el){
  var v=document.getElementById('venom');
- var w=v.querySelector('.water');
+ var sm=document.getElementById('secMenu');
+ var x0=sm?sm.getBoundingClientRect().left:(innerWidth*0.78);
  v.style.opacity='1';v.style.visibility='visible';v.style.transition='none';
- w.classList.remove('wave');
- void w.offsetWidth;
- w.style.transition='none';
- w.style.transform='translateX(101%)';
- void w.offsetWidth;
- w.style.transition='transform .8s cubic-bezier(.45,0,.2,1)';
- w.style.transform='translateX(0)';
+ v.innerHTML='';
+ var n=16;
+ var drops=[];
+ for(var i=0;i<n;i++){
+  var d=document.createElement('div');d.className='rd';
+  var s=28+Math.random()*64;
+  d.style.width=s+'px';d.style.height=s+'px';
+  d.style.left=x0+'px';d.style.top=(Math.random()*innerHeight)+'px';
+  d.style.transform='translate(-50%,-50%) scale(.2)';
+  v.appendChild(d);drops.push(d);
+ }
+ void v.offsetWidth;
+ for(var i=0;i<drops.length;i++){
+  var xdisp=-(innerWidth*0.9+Math.random()*innerWidth*0.3);
+  var ydisp=Math.random()*innerHeight-innerHeight/2;
+  var S=4+Math.random()*4.5;
+  drops[i].style.transition='transform .95s cubic-bezier(.4,0,.2,1) '+(Math.random()*0.18)+'s';
+  drops[i].style.transform='translate('+xdisp+'px,'+ydisp+'px) scale('+S+')';
+ }
  setTimeout(function(){
   closeMenu();
   var f=document.getElementById('films'),sh=document.getElementById('shelf');
@@ -637,7 +647,7 @@ function gotoPanel(sel,el){
   else {f.classList.remove('show');sh.classList.remove('show');var el2=document.querySelector(sel);if(el2)el2.scrollIntoView({behavior:'smooth'});}
   if(sel==='#films'||sel==='#images'){var tar=document.getElementById(sel.slice(1));if(sel==='#images'&&tar)tar.scrollIntoView();else if(sel==='#films')window.scrollTo(0,0);}
  },760);
- setTimeout(function(){v.style.opacity='0';v.style.visibility='hidden';w.classList.remove('wave');},1500);
+ setTimeout(function(){v.style.opacity='0';v.style.visibility='hidden';v.innerHTML='';},1450);
 }
 
 function goSearch(){gotoPanel('#films');}
