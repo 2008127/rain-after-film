@@ -199,6 +199,12 @@ footer .f-r{color:var(--tx3);font-size:13px}
 .mitem button{background:none;border:1px solid var(--line2);padding:4px 10px;border-radius:8px;color:var(--tx2);cursor:pointer;font-size:12px;margin-left:6px}
 .mitem button:hover{color:#fff;border-color:var(--line2)}
 
+
+.gosrc{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#0a0a0c;font-weight:700;text-decoration:none;font-size:15px;transition:.2s}
+.gosrc:hover{filter:brightness(1.1)}
+.gpl{font-size:16px}
+.bhint{color:var(--tx2);font-size:12px;margin-top:6px}
+
 </style>
 </head>
 <body>
@@ -409,7 +415,7 @@ loop();
 const tt=document.getElementById('toTop');
 addEventListener('scroll',()=>{tt.classList.toggle('show',scrollY>400)});
 
-function searchFilm(){const q=document.getElementById('fq').value.trim();if(!q){document.getElementById('fq').focus();return;}window.open('https://seedog.cc/s/'+encodeURIComponent(q)+'/','_blank');}
+function searchFilm(){const q=document.getElementById('fq').value.trim();if(!q){document.getElementById('fq').focus();return;}window.open('https://zlys8.top/search?q='+encodeURIComponent(q),'_blank');}
 function searchImg(){const q=document.getElementById('iq').value.trim();if(!q){document.getElementById('iq').focus();return;}window.open('https://cn.bing.com/images/search?q='+encodeURIComponent(q),'_blank');}
 document.getElementById('fq').addEventListener('keydown',e=>{if(e.key==='Enter')searchFilm();});
 document.getElementById('iq').addEventListener('keydown',e=>{if(e.key==='Enter')searchImg();});
@@ -435,7 +441,7 @@ function renderMList(){const m=document.getElementById('mlist');
   m.innerHTML=window.BOOKS.map((x,i)=>'<div class="mitem"><span>'+sEsc(x.name)+' <span style="color:var(--tx2);font-size:11px">· '+sEsc(x.author||'佚名')+'</span></span><button onclick="openEdit('+i+')" style="color:var(--acc)">✎ 编辑</button><button onclick="delBook('+i+')">删除</button></div>').join('');}
 function addBook(){const n=document.getElementById('nname').value.trim(),a=document.getElementById('nauthor').value.trim();
   if(!n){document.getElementById('nname').focus();return;}
-  window.BOOKS.push({name:n,author:a||'佚名'});document.getElementById('nname').value='';document.getElementById('nauthor').value='';renderMList();}
+  window.BOOKS.push({name:n,author:a||'佚名',cover:'',desc:'',src:'https://zlys8.top/search?q='+encodeURIComponent(n),srcType:'url'});document.getElementById('nname').value='';document.getElementById('nauthor').value='';renderMList();}
 function delBook(i){window.BOOKS.splice(i,1);renderMList();}
 
 const REPO='2008127/rain-after-film';
@@ -476,7 +482,7 @@ function openBook(i){
   if(x.src){
     const isVid=/\.(mp4|webm|ogg|mov)(\?|$)/i.test(x.src);
     if(isVid){pl.innerHTML='<video controls playsinline style="width:100%;max-height:300px;border-radius:12px;background:#000" src="'+sEsc(x.src)+'"></video>';}
-    else{pl.innerHTML='<iframe src="'+sEsc(x.src)+'" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:300px;border:0;border-radius:12px"></iframe>';}
+    else{pl.innerHTML='<a class="gosrc" href="'+sEsc(x.src)+'" target="_blank" rel="noopener"><span class="gpl">▶</span> 去在线观看（真狼影视）</a><div class="bhint">点开会在新窗口打开片源</div>';}
     pl.classList.add('has');
   }else{pl.innerHTML='<div class="bknoplay">📽️ 片源待站长添加</div>';pl.classList.remove('has');}
   const bk=document.getElementById('bk3d');bk.classList.remove('bkgrow');void bk.offsetWidth;bk.classList.add('bkgrow');
@@ -529,6 +535,7 @@ async function saveEdit(){
   const srcUrl=document.getElementById('eSrcUrl').value.trim();
   if(srcFile){st.textContent='正在上传片源（较大请耐心等）…';try{const ts=Date.now();src=await upGithub('video_'+ts+'_'+srcFile.name,srcFile);srcType2='file';}catch(e){st.textContent='片源上传失败：'+e.message;return;}}
   else if(srcType==='url'&&srcUrl){src=srcUrl;srcType2='url';}
+  if(!src){src='https://zlys8.top/search?q='+encodeURIComponent(x.name);srcType2='url';}
   x.cover=cover;x.desc=document.getElementById('eDesc').value.trim();x.src=src;x.srcType=srcType2;
   st.textContent='✅ 已更新。记得点【保存到云端】发布给朋友们。';
   st.style.color='var(--acc)';

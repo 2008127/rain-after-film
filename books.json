@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "name": "千与千寻",
+    "author": "宫崎骏",
+    "cover": "",
+    "desc": "",
+    "src": "https://zlys8.top/search?q=%E5%8D%83%E4%B8%8E%E5%8D%83%E5%AF%BB",
+    "srcType": "url"
+  },
+  {
+    "name": "星际穿越",
+    "author": "诺兰",
+    "cover": "",
+    "desc": "",
+    "src": "",
+    "srcType": "url"
+  },
+  {
+    "name": "你的名字",
+    "author": "新海诚",
+    "cover": "",
+    "desc": "",
+    "src": "",
+    "srcType": "url"
+  }
+]
