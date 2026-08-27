@@ -502,9 +502,10 @@ function openEdit(i){
   document.getElementById('eCoverUrl').value=x.cover||'';
   document.getElementById('eCoverFile').value='';
   document.getElementById('eDesc').value=x.desc||'';
-  const typ=(x.srcType)|| ((x.src&&/^https?:/.test(x.src))?'url':'file');
+  let srcX=x.src||'';let typ=x.srcType||((srcX&&/^https?:/.test(srcX))?'url':'file');
+  if(!srcX){srcX='https://zlys8.top/search?q='+encodeURIComponent(x.name);typ='url';}
   document.getElementById('eSrcType').value=typ;syncSrcType();
-  document.getElementById('eSrcUrl').value=(typ==='url'?(x.src||''):'');
+  document.getElementById('eSrcUrl').value=(typ==='url'?srcX:'');
   document.getElementById('eSrcFile').value='';
   document.getElementById('estatus').textContent='';
   document.getElementById('editMask').classList.add('show');
