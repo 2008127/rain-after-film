@@ -164,6 +164,29 @@ footer .f-r{color:var(--tx3);font-size:13px}
 #intro.go .il{transform:translateX(-102%)}
 #intro.go .ir{transform:translateX(102%)}
 
+
+/* 书本摊开 */
+.book{cursor:pointer}
+.book:hover{transform:translateY(-6px);box-shadow:0 14px 26px rgba(0,0,0,.35)}
+.book{transition:transform .25s,box-shadow .25s}
+#bookMask{position:fixed;inset:0;z-index:130;background:rgba(4,5,8,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px}
+#bookMask.show{display:flex}
+.bk3d{position:relative;width:min(760px,94vw);height:min(460px,64vh);background:linear-gradient(145deg,#1a1d24,#101219);border:1px solid var(--line2);border-radius:18px;box-shadow:var(--soft);display:flex;overflow:hidden}
+.bk3d.bkgrow{animation:bookopen 1s cubic-bezier(.7,0,.2,1)}
+@keyframes bookopen{0%{transform:scaleX(.12)}62%{transform:scaleX(1.05)}100%{transform:scaleX(1)}}
+.blk{width:38%;min-width:200px;position:relative;background:linear-gradient(155deg,#23262f,#15171e);display:flex;align-items:center;justify-content:center;border-right:2px solid rgba(255,255,255,.06)}
+.blk .bkcover{width:100%;height:100%;object-fit:cover}
+.covph{color:var(--tx2);font-size:13px}
+.brk{width:62%;display:flex;flex-direction:column;gap:10px;padding:20px 22px;overflow:auto}
+.bkname{color:#fff;font-size:22px;font-weight:800}
+.bkauthor{color:var(--acc);font-size:13px}
+.bkdesc{color:var(--tx2);font-size:13.5px;line-height:1.7;flex:1}
+.bkplayer{width:100%}
+.bkplayer.has+.brkseal{display:none}
+.bknoplay{color:var(--tx2);border:1px dashed var(--line2);border-radius:12px;padding:14px;text-align:center;font-size:13px}
+.bookClose{position:absolute;top:12px;right:14px;z-index:9;background:rgba(255,255,255,.08);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;transition:.2s}
+.bookClose:hover{background:rgba(255,255,255,.18)}
+
 </style>
 </head>
 <body>
@@ -291,6 +314,21 @@ footer .f-r{color:var(--tx3);font-size:13px}
   </div>
 </div>
 
+<div id="bookMask">
+  <div class="bk3d" id="bk3d">
+    <button class="bookClose" onclick="closeBook()">✕</button>
+    <div class="blk">
+      <img id="bkCover" class="bkcover" style="display:none" alt="封面">
+      <div class="covph" id="covph">暂无封面</div>
+    </div>
+    <div class="brk">
+      <div class="bkname" id="bkName"></div>
+      <div class="bkauthor" id="bkAuthor"></div>
+      <div class="bkdesc" id="bkDesc"></div>
+      <div class="bkplayer" id="bkPlayer"></div>
+    </div>
+  </div>
+</div>
 <script>
 function toggleDD(e){e.stopPropagation();document.getElementById("dd").classList.toggle("open");}
 function closeDD(){document.getElementById("dd").classList.remove("open");}
@@ -320,7 +358,7 @@ setTimeout(function(){
   },1000);
 },700);
 setTimeout(function(){__in.style.display="none";},2200);
-const DEFAULT_BOOKS=[{name:'千与千寻',author:'宫崎骏'},{name:'星际穿越',author:'诺兰'},{name:'你的名字',author:'新海诚'}];
+const DEFAULT_BOOKS=[{name:'千与千寻',author:'宫崎骏',cover:'',desc:'',src:''},{name:'星际穿越',author:'诺兰',cover:'',desc:'',src:''},{name:'你的名字',author:'新海诚',cover:'',desc:'',src:''}];
 window.BOOKS=[];
 
 /* 星空（淡） */
@@ -343,7 +381,7 @@ const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function renderShelf(){const c=document.getElementById('shelfbooks');const b=window.BOOKS||[];
   if(!b.length){c.innerHTML='<div style="color:#9c9ea6;align-self:center;">书架正在整理，稍后刷新看看 ✨</div>';return;}
-  c.innerHTML=b.map((x,i)=>'<div class="book" style="background:linear-gradient(160deg,'+scol[(i+1)%scol.length]+','+scol[i%scol.length]+')"><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author||'佚名')+'</span></div>').join('');}
+  c.innerHTML=b.map((x,i)=>'<div class="book" title="点击打开这本书" onclick="openBook('+i+')" style="background:linear-gradient(160deg,'+scol[(i+1)%scol.length]+','+scol[i%scol.length]+')"><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author||'佚名')+'</span></div>').join('');}
 async function loadBooks(){
   try{const r=await fetch('books.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){window.BOOKS=d;}}}catch(e){}
   if(!window.BOOKS.length)window.BOOKS=DEFAULT_BOOKS;
@@ -387,6 +425,29 @@ async function saveToCloud(){
 
 document.addEventListener('DOMContentLoaded',loadBooks);
 renderShelf();
+
+function openBook(i){
+  const x=window.BOOKS[i];if(!x)return;
+  document.getElementById('bkName').textContent=x.name||'未命名';
+  document.getElementById('bkAuthor').textContent=(x.author||'佚名')+' · '+((x.refYear||''));
+  const cover=document.getElementById('bkCover'),ph=document.getElementById('covph');
+  if(x.cover){cover.src=x.cover;cover.style.display='block';ph.style.display='none';}
+  else{cover.style.display='none';ph.style.display='block';}
+  const d=document.getElementById('bkDesc');
+  d.innerHTML=x.desc?sEsc(x.desc):'<i style="opacity:.55">简介待站长补充</i>';
+  const pl=document.getElementById('bkPlayer');pl.innerHTML='';
+  if(x.src){
+    const isVid=/\.(mp4|webm|ogg|mov)(\?|$)/i.test(x.src);
+    if(isVid){pl.innerHTML='<video controls playsinline style="width:100%;max-height:300px;border-radius:12px;background:#000" src="'+sEsc(x.src)+'"></video>';}
+    else{pl.innerHTML='<iframe src="'+sEsc(x.src)+'" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:300px;border:0;border-radius:12px"></iframe>';}
+    pl.classList.add('has');
+  }else{pl.innerHTML='<div class="bknoplay">📽️ 片源待站长添加</div>';pl.classList.remove('has');}
+  const bk=document.getElementById('bk3d');bk.classList.remove('bkgrow');void bk.offsetWidth;bk.classList.add('bkgrow');
+  document.getElementById('bookMask').classList.add('show');
+}
+function closeBook(){document.getElementById('bookMask').classList.remove('show');}
+document.getElementById('bookMask').addEventListener('click',function(e){if(e.target===this)closeBook();});
+
 </script>
 </body>
 </html>
