@@ -228,6 +228,12 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 /* 移轴进入动画 */
 .tilt{opacity:0;transform:translateY(46px) scale(.97);transition:opacity .65s ease,transform .85s cubic-bezier(.22,1,.36,1)}
 .tilt.on{opacity:1;transform:none}
+
+/* 二级页：影视检索 / 光影书架（整屏覆盖，默认隐藏） */
+#films,#shelf{position:fixed;inset:0;z-index:148;background-color:#1c1e24;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0,rgba(255,255,255,.05) 1px,transparent 1px,transparent 10px);display:none;overflow-y:auto;padding:76px 6vw 40px}
+#films.show,#shelf.show{display:block}
+.panel-close{position:fixed;top:16px;left:5vw;z-index:150;padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:14px;cursor:pointer;transition:.2s}
+.panel-close:hover{background:rgba(255,255,255,.14)}
 </style>
 </head>
 <body>
@@ -290,6 +296,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 
 <!-- 二级 · 功能 -->
 <section id="films">
+  <button class="panel-close" onclick="gotoPanel('#top')">← 返回主页</button>
   <div class="sec-tag">Explore</div>
   <h2 class="sec-h">光影检索台</h2>
   <p class="sec-p">想看点什么？输入片名即时检索。下面两块，一块搜电影、一块搜图片，随时补充你的灵感库。</p>
@@ -310,6 +317,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 </section>
 
 <section id="shelf">
+  <button class="panel-close" onclick="gotoPanel('#top')">← 返回主页</button>
   <div class="fn-head">
     <div>
       <div class="sec-tag" style="margin-bottom:5px">Our Shelf</div>
@@ -613,7 +621,13 @@ function gotoPanel(sel){
  void v.offsetWidth;
  v.style.transition='clip-path .65s cubic-bezier(.4,0,.2,1)';
  v.style.clipPath='circle(150% at '+x+'px '+y+'px)';
- setTimeout(function(){var el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:'smooth'});},480);
+ setTimeout(function(){
+  var f=document.getElementById('films'),sh=document.getElementById('shelf');
+  if(sel==='#films'||sel==='#images'){sh.classList.remove('show');f.classList.add('show');}
+  else if(sel==='#shelf'){f.classList.remove('show');sh.classList.add('show');}
+  else {f.classList.remove('show');sh.classList.remove('show');var el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:'smooth'});}
+  if((sel==='#films'||sel==='#images')){var tar=document.getElementById(sel.slice(1));if(sel==='#images'&&tar)tar.scrollIntoView();else if(sel==='#films')window.scrollTo(0,0);}
+ },480);
  setTimeout(function(){v.style.opacity='0';},1250);
 }
 function goSearch(){gotoPanel('#films');}
