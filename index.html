@@ -622,7 +622,6 @@ function goStar(){gotoPanel('#shelf');}
 var _tx=0,_ty=0;
 document.addEventListener('touchstart',function(e){_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
 document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-_tx,dy=e.changedTouches[0].clientY-_ty;if(dx>70&&Math.abs(dy)<60)openMenu();},{passive:true});
-);}
 function updNav(){if(navEl)navEl.classList.toggle('at-top',window.scrollY<40);}
 addEventListener('scroll',updNav);if(document.readyState!=='loading')updNav();else document.addEventListener('DOMContentLoaded',updNav);
 function toggleMusic(e){if(e)e.stopPropagation();const a=document.getElementById('bgm'),b=document.querySelector('.lg');
