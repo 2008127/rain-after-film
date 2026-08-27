@@ -92,12 +92,11 @@ section{padding:70px 6vw;position:relative;max-width:1180px;margin:0 auto}
 .mod .m-sub{color:var(--tx2);font-size:12.5px;margin-bottom:20px}
 .sbar{display:flex;align-items:center;gap:10px;max-width:540px;margin:0 auto 18px;padding:5px 6px 5px 16px;border-radius:24px;border:1px solid var(--line2);background:rgba(255,255,255,.06);transition:.2s}
 .sbar:focus-within{border-color:var(--acc);background:rgba(255,255,255,.09)}
-.sico{flex:none;display:flex;align-items:center;color:var(--tx2)}
 .sbar input{flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:15px;padding:8px 0}
 .sbar input::placeholder{color:var(--tx2)}
 .sbar input:focus{background:transparent;border:none}
-.sgo{flex:none;border:none;border-radius:18px;padding:10px 20px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#0a0a0c;font-weight:600;font-size:14px;cursor:pointer;transition:.2s}
-.sgo:hover{filter:brightness(1.1)}
+.sgo{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid transparent;background:transparent;color:var(--acc);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.sgo:hover{background:rgba(255,255,255,.1);color:#fff}
 .hint{color:var(--tx3);font-size:12px;line-height:1.7;padding:13px;border:1px dashed var(--line2);border-radius:12px;background:rgba(255,255,255,.02)}
 .hint b{color:var(--acc);font-weight:600}
 
@@ -225,13 +224,13 @@ footer .f-r{color:var(--tx3);font-size:13px}
     <div class="mod">
       <h3>🎞️ 影视检索</h3>
       <div class="m-sub">输入电影 / 剧集名称，实时搜索。</div>
-      <div class="sbar"><span class="sico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><input id="fq" type="text" placeholder="例如：千与千寻、星际穿越…"><button class="sgo" onclick="searchFilm()">搜索</button></div>
+      <div class="sbar"><input id="fq" type="text" placeholder="例如：千与千寻、星际穿越…"><button class="sgo" onclick="searchFilm()" aria-label="检索"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button></div>
       <div class="hint">为你接入 <b>SeedHub</b> 片源库，搜到的高清资源一键前往。</div>
     </div>
     <div class="mod" id="images">
       <h3>🖼️ 图片 · 壁纸</h3>
       <div class="m-sub">全网高清图，也能去哲风壁纸逛逛。</div>
-      <div class="sbar"><span class="sico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><input id="iq" type="text" placeholder="想找的图，例：星空"><button class="sgo" onclick="searchImg()">搜索</button></div>
+      <div class="sbar"><input id="iq" type="text" placeholder="想找的图，例：星空"><button class="sgo" onclick="searchImg()" aria-label="检索图片"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button></div>
       <div class="hint">可搜全网高清图片。想逛它们的图库，<b>去<a href="https://haowallpaper.com/" target="_blank" style="color:var(--acc)">哲风壁纸</a></b> 瞧瞧。</div>
     </div>
   </div>
