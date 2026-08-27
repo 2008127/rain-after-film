@@ -301,22 +301,24 @@ setTimeout(function(){
   var lr=__il.getBoundingClientRect(), ner=__iname.getBoundingClientRect();
   var nr=__navlg.getBoundingClientRect(), hr=__h1.getBoundingClientRect();
   __il.style.position="fixed";__il.style.left=lr.left+"px";__il.style.top=lr.top+"px";__il.style.width=lr.width+"px";__il.style.height=lr.height+"px";__il.style.margin="0";__il.style.zIndex=6;
-  __iname.style.position="fixed";__iname.style.left=ner.left+"px";__iname.style.top=ner.top+"px";__iname.style.zIndex=6;
-  __iname.style.fontSize="34px";__iname.style.letterSpacing="8px";
-  requestAnimationFrame(function(){
-    __il.style.transition="all 1s cubic-bezier(.77,0,.18,1)";
-    __il.style.left=nr.left+"px";__il.style.top=nr.top+"px";__il.style.width=nr.width+"px";__il.style.height=nr.height+"px";__il.style.borderRadius="50%";
-    __iname.style.transition="all 1s cubic-bezier(.77,0,.18,1)";
-    __iname.style.left=hr.left+"px";__iname.style.top=hr.top+"px";__iname.style.fontSize=getComputedStyle(__h1).fontSize;__iname.style.letterSpacing=getComputedStyle(__h1).letterSpacing;
-    __in.classList.add("go");
-  });
+  __iname.style.position="fixed";__iname.style.left=ner.left+"px";__iname.style.top=ner.top+"px";__iname.style.margin="0";__iname.style.zIndex=6;
+  __il.style.borderRadius="24px";
+  __in.classList.add("go");
+  __il.animate([
+    {left:lr.left+"px",top:lr.top+"px",width:lr.width+"px",height:lr.height+"px",borderRadius:"24px"},
+    {left:nr.left+"px",top:nr.top+"px",width:nr.width+"px",height:nr.height+"px",borderRadius:"50%"}
+  ],{duration:1000,easing:"cubic-bezier(.77,0,.18,1)",fill:"forwards"});
+  __iname.animate([
+    {left:ner.left+"px",top:ner.top+"px",fontSize:"34px",letterSpacing:"8px"},
+    {left:hr.left+"px",top:hr.top+"px",fontSize:getComputedStyle(__h1).fontSize,letterSpacing:getComputedStyle(__h1).letterSpacing}
+  ],{duration:1000,easing:"cubic-bezier(.77,0,.18,1)",fill:"forwards"});
   setTimeout(function(){
     __wrap.style.transition="opacity .6s ease";__wrap.style.opacity="1";
     __il.style.transition="opacity .6s ease";__il.style.opacity="0";
     __iname.style.transition="opacity .6s ease";__iname.style.opacity="0";
-  },1050);
+  },1000);
 },700);
-setTimeout(function(){__in.style.display="none";},2300);
+setTimeout(function(){__in.style.display="none";},2200);
 const DEFAULT_BOOKS=[{name:'千与千寻',author:'宫崎骏'},{name:'星际穿越',author:'诺兰'},{name:'你的名字',author:'新海诚'}];
 window.BOOKS=[];
 
