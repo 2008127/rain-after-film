@@ -19,10 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Source Han Sans
   color:var(--tx);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
 ::selection{background:rgba(138,180,255,.3)}
 /* 深色背景光晕 */
-.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-  radial-gradient(60% 50% at 12% -8%,rgba(111,143,232,.14),transparent 60%),
-  radial-gradient(55% 45% at 92% 6%,rgba(243,214,123,.08),transparent 60%),
-  radial-gradient(70% 60% at 50% 110%,rgba(138,180,255,.06),transparent 60%),var(--bg)}
+.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.20),transparent 35%),radial-gradient(70% 60% at 50% 110%,rgba(0,0,0,.20),transparent 60%),#33363c}
 canvas#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
 .wrap{position:relative;z-index:2}
 a{text-decoration:none;color:inherit}
@@ -185,7 +182,7 @@ footer .f-r{color:var(--tx3);font-size:13px}
 
 
 /* 灰纹底（整体底色） */
-body{background-color:#25272b;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.025) 1px,transparent 0),radial-gradient(circle at 1px 1px,rgba(0,0,0,.18) 1px,transparent 0);background-size:20px 20px,20px 20px}
+body{background-color:#33363c;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.16) 1px,transparent 1px);background-size:46px 46px,46px 46px,23px 23px,23px 23px}
 /* 水玻璃黑透导航 */
 #nav{position:fixed;top:0;left:0;right:0;z-index:90;background:rgba(10,10,12,.86);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.05)}
 .navin{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:52px}
@@ -225,6 +222,10 @@ body{background-color:#25272b;background-image:radial-gradient(circle at 1px 1px
 #secMenu.open .sm-item:nth-child(5){transition-delay:.25s}
 .sm-item:hover{color:#fff;transform:translateX(6px)}
 @media(max-width:640px){.sm-item{font-size:21px}.sm-list{padding-top:16vh}.ic-btn{width:30px;height:30px}}
+
+/* 移轴进入动画 */
+.tilt{opacity:0;transform:translateY(46px) scale(.97);transition:opacity .65s ease,transform .85s cubic-bezier(.22,1,.36,1)}
+.tilt.on{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -428,9 +429,27 @@ const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W,H;
 function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
 rs();addEventListener('resize',rs);
 const stars=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.2,vx:(Math.random()-.5)*.1,vy:(Math.random()-.5)*.1}));
-function loop(){cx.clearRect(0,0,W,H);for(const s of stars){s.x+=s.vx;s.y+=s.vy;if(s.x<0)s.x=W;if(s.x>W)s.x=0;if(s.y<0)s.y=H;if(s.y>H)s.y=0;cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle='rgba(244,244,246,.5)';cx.fill();}requestAnimationFrame(loop);}
-loop();
+/* starfield disabled */
 
+/* 移轴进入动画：影视检索 / 光影书架 */
+(function(){
+ function collect(sec){
+  var items=[];
+  sec.querySelectorAll('.sec-tag,.sec-h,.sec-p').forEach(function(e){items.push(e);});
+  var mg=sec.querySelector('.mod-grid');if(mg)mg.querySelectorAll(':scope > *').forEach(function(x){items.push(x);});
+  var tip=sec.querySelector('.shelf-tip');if(tip)items.push(tip);
+  return items;
+ }
+ ['films','shelf'].forEach(function(id){
+  var sec=document.getElementById(id);if(!sec)return;
+  var items=collect(sec);
+  items.forEach(function(el,i){el.classList.add('tilt');el.style.transitionDelay=(i*0.08)+'s';});
+  var io=new IntersectionObserver(function(es){
+   es.forEach(function(e){if(e.isIntersecting){items.forEach(function(el){el.classList.add('on');});io.disconnect();}});
+  },{threshold:.15});
+  io.observe(sec);
+ });
+})();
 const tt=document.getElementById('toTop');
 addEventListener('scroll',()=>{tt.classList.toggle('show',scrollY>400)});
 
