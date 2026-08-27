@@ -685,7 +685,7 @@ function toggleMusic(e){if(e)e.stopPropagation();const a=document.getElementById
 <script>
 /* ===== 音乐播放器 ===== */
 var MKEY='rf_music';
-function mget(){var d=localStorage.getItem(MKEY);var m=d?JSON.parse(d):null;if(!m||!m.songs||!m.songs.length)m={songs:[{n:'雨后 · 轻音乐',u:''}],idx:0,rate:1};if(m.rate==null)m.rate=1;return m;}
+function mget(){var d=localStorage.getItem(MKEY);var m=d?JSON.parse(d):null;if(!m||!m.songs||!m.songs.length)m={songs:[{n:'Thank you for dears',u:'https://kw-er.kuwo.cn/bd3caffe83a9b4a879750cdb76ab2051/6a905815/resource/30106/trackmedia/M500002uXHR52GMUVP.mp3'}],idx:0,rate:1};if(m.rate==null)m.rate=1;return m;}
 function mset(m){localStorage.setItem(MKEY,JSON.stringify(m));}
 var plEl,discEl,pnameEl,prangeEl,pcurEl,pdurEl,pbtnEl,prateEl,psongsEl,audioEl;
 function escX(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'"'}[c];});}
