@@ -187,6 +187,18 @@ footer .f-r{color:var(--tx3);font-size:13px}
 .bookClose{position:absolute;top:12px;right:14px;z-index:9;background:rgba(255,255,255,.08);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;transition:.2s}
 .bookClose:hover{background:rgba(255,255,255,.18)}
 
+
+/* 编辑书面板 */
+.mlab{display:block;font-size:12px;color:var(--tx2);margin:12px 0 4px}
+.mhint{font-size:11px;color:var(--tx3);margin:3px 0 0}
+.modal input[type=file]{font-size:12px;color:var(--tx)}
+.modal textarea{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--tx);font-size:13px;resize:vertical;outline:none;margin-bottom:4px}
+.modal textarea:focus{border-color:var(--acc)}
+.modal select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--tx);font-size:13px;outline:none;margin-bottom:6px}
+.mitimeline{color:var(--tx2);font-size:11px;margin-top:2px}
+.mitem button{background:none;border:1px solid var(--line2);padding:4px 10px;border-radius:8px;color:var(--tx2);cursor:pointer;font-size:12px;margin-left:6px}
+.mitem button:hover{color:#fff;border-color:var(--line2)}
+
 </style>
 </head>
 <body>
@@ -329,6 +341,31 @@ footer .f-r{color:var(--tx3);font-size:13px}
     </div>
   </div>
 </div>
+<div id="editMask" class="modal-mask">
+  <div class="modal">
+    <h3>✎ 编辑这本书</h3>
+    <div class="m-sub">片名：<b id="enName" style="color:#fff"></b> · 作者：<b id="enAuthor" style="color:#fff"></b></div>
+    <label class="mlab">封面图片</label>
+    <input id="eCoverUrl" type="text" placeholder="封面图片地址(可留空)">
+    <input id="eCoverFile" type="file" accept="image/*">
+    <div class="mhint">上传一张图，或填图片地址，二选一。</div>
+    <label class="mlab">简介</label>
+    <textarea id="eDesc" rows="3" placeholder="写点这本影片的简介…"></textarea>
+    <label class="mlab">片源（两种方式）</label>
+    <select id="eSrcType" onchange="syncSrcType()">
+      <option value="file">直接上传视频文件</option>
+      <option value="url">填视频地址</option>
+    </select>
+    <div id="eSrcFileBox"><input id="eSrcFile" type="file" accept="video/*"><div class="mhint">上传一段视频（建议较小，太大上传会慢）。</div></div>
+    <div id="eSrcUrlBox" style="display:none"><input id="eSrcUrl" type="text" placeholder="视频地址(https://… 或 网盘/网页链接)"></div>
+    <div class="act" style="margin-top:16px">
+      <button class="save" onclick="saveEdit()">💾 保存</button>
+      <button class="cancel" onclick="closeEdit()">取消</button>
+    </div>
+    <div class="status" id="estatus"></div>
+    <div class="mnote">点【保存】只保存在本页；要发布给朋友们看，再点【保存到云端】。</div>
+  </div>
+</div>
 <script>
 function toggleDD(e){e.stopPropagation();document.getElementById("dd").classList.toggle("open");}
 function closeDD(){document.getElementById("dd").classList.remove("open");}
@@ -395,7 +432,7 @@ function closeAdmin(){mask.classList.remove('show');}
 mask.addEventListener('click',e=>{if(e.target===mask)closeAdmin();});
 function renderMList(){const m=document.getElementById('mlist');
   if(!window.BOOKS.length){m.innerHTML='<div style="color:#9c9ea6;padding:10px">书单为空，添加一本吧。</div>';return;}
-  m.innerHTML=window.BOOKS.map((x,i)=>'<div class="mitem"><span>'+sEsc(x.name)+' <span style="color:var(--tx2);font-size:11px">· '+sEsc(x.author||'佚名')+'</span></span><button onclick="delBook('+i+')">删除</button></div>').join('');}
+  m.innerHTML=window.BOOKS.map((x,i)=>'<div class="mitem"><span>'+sEsc(x.name)+' <span style="color:var(--tx2);font-size:11px">· '+sEsc(x.author||'佚名')+'</span></span><button onclick="openEdit('+i+')" style="color:var(--acc)">✎ 编辑</button><button onclick="delBook('+i+')">删除</button></div>').join('');}
 function addBook(){const n=document.getElementById('nname').value.trim(),a=document.getElementById('nauthor').value.trim();
   if(!n){document.getElementById('nname').focus();return;}
   window.BOOKS.push({name:n,author:a||'佚名'});document.getElementById('nname').value='';document.getElementById('nauthor').value='';renderMList();}
@@ -447,6 +484,56 @@ function openBook(i){
 }
 function closeBook(){document.getElementById('bookMask').classList.remove('show');}
 document.getElementById('bookMask').addEventListener('click',function(e){if(e.target===this)closeBook();});
+
+
+let curEditIdx=-1;
+const BKASSET='https://2008127.github.io/rain-after-film/assets/';
+function syncSrcType(){const t=document.getElementById('eSrcType').value;document.getElementById('eSrcFileBox').style.display=t==='file'?'block':'none';document.getElementById('eSrcUrlBox').style.display=t==='url'?'block':'none';}
+function openEdit(i){
+  curEditIdx=i;const x=window.BOOKS[i];if(!x)return;
+  document.getElementById('enName').textContent=x.name||'';
+  document.getElementById('enAuthor').textContent=x.author||'佚名';
+  document.getElementById('eCoverUrl').value=x.cover||'';
+  document.getElementById('eCoverFile').value='';
+  document.getElementById('eDesc').value=x.desc||'';
+  const typ=(x.srcType)|| ((x.src&&/^https?:/.test(x.src))?'url':'file');
+  document.getElementById('eSrcType').value=typ;syncSrcType();
+  document.getElementById('eSrcUrl').value=(typ==='url'?(x.src||''):'');
+  document.getElementById('eSrcFile').value='';
+  document.getElementById('estatus').textContent='';
+  document.getElementById('editMask').classList.add('show');
+}
+function closeEdit(){document.getElementById('editMask').classList.remove('show');}
+document.getElementById('editMask').addEventListener('click',function(e){if(e.target===this)closeEdit();});
+async function upGithub(path,file){
+  const token=document.getElementById('tok').value.trim();
+  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+  const ep='https://api.github.com/repos/2008127/rain-after-film/contents/'+path;
+  let sha='';try{const g=await fetch(ep,{headers:{'Authorization':'Bearer '+token}});if(g.ok){const j=await g.json();sha=j.sha||'';}}catch(e){}
+  const body={message:'upload asset',content:b64};if(sha)body.sha=sha;
+  const r=await fetch(ep,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const j=await r.json().catch(()=>{});throw new Error((j&&j.message)||('upload '+r.status));}
+  return BKASSET+path.split('/').pop();
+}
+async function saveEdit(){
+  const x=window.BOOKS[curEditIdx];if(!x)return;
+  const st=document.getElementById('estatus');st.textContent='';
+  let cover=x.cover||'';
+  const covFile=document.getElementById('eCoverFile').files[0];
+  const covUrl=document.getElementById('eCoverUrl').value.trim();
+  if(covFile){st.textContent='正在上传封面…';try{const ts=Date.now();cover=await upGithub('cover_'+ts+'_'+covFile.name,covFile);}catch(e){st.textContent='封面上传失败：'+e.message;return;}}
+  else if(covUrl){cover=covUrl;}
+  const srcType=document.getElementById('eSrcType').value;
+  let src=x.src||'',srcType2=srcType;
+  const srcFile=document.getElementById('eSrcFile').files[0];
+  const srcUrl=document.getElementById('eSrcUrl').value.trim();
+  if(srcFile){st.textContent='正在上传片源（较大请耐心等）…';try{const ts=Date.now();src=await upGithub('video_'+ts+'_'+srcFile.name,srcFile);srcType2='file';}catch(e){st.textContent='片源上传失败：'+e.message;return;}}
+  else if(srcType==='url'&&srcUrl){src=srcUrl;srcType2='url';}
+  x.cover=cover;x.desc=document.getElementById('eDesc').value.trim();x.src=src;x.srcType=srcType2;
+  st.textContent='✅ 已更新。记得点【保存到云端】发布给朋友们。';
+  st.style.color='var(--acc)';
+  renderMList();
+}
 
 </script>
 </body>
