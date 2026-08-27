@@ -623,23 +623,24 @@ function gotoPanel(sel,el){
  v.innerHTML='';
  v.style.opacity='1';v.style.visibility='visible';v.style.transition='none';
  var blobs=[
-  {w:520,rot:0,scale:4,delay:0},
-  {w:520,rot:110,scale:4.7,delay:70},
-  {w:540,rot:220,scale:5.4,delay:140},
-  {w:560,rot:320,scale:6.2,delay:210}
+  {w:430,dx:-45,dy:-35,rot:10, scale:3.6,delay:0,   br:'52%48%60%40%/55%45%58%42%'},
+  {w:440,dx:40, dy:-18,rot:120,scale:4.2,delay:60,  br:'45%55%40%60%/52%48%60%40%'},
+  {w:460,dx:-24,dy:42, rot:230,scale:4.9,delay:120, br:'58%42%52%48%/44%56%42%58%'},
+  {w:490,dx:28, dy:34, rot:335,scale:5.6,delay:180, br:'50%50%55%45%/58%42%52%48%'}
  ];
  blobs.forEach(function(b,i){
   var d=document.createElement('div');d.className='wb';
-  d.style.left=x+'px';d.style.top=y+'px';
+  d.style.left=(x+b.dx)+'px';d.style.top=(y+b.dy)+'px';
   d.style.width=b.w+'px';d.style.height=b.w+'px';
+  d.style.borderRadius=b.br;d.style.filter='blur(2px)';
   d.style.transform='translate(-50%,-50%) rotate('+b.rot+'deg) scale(0)';
   v.appendChild(d);
  });
  void v.offsetWidth;
  var els=v.querySelectorAll('.wb');
  blobs.forEach(function(b,i){
-  els[i].style.transform='translate(-50%,-50%) rotate('+(b.rot+50)+'deg) scale('+b.scale+')';
-  els[i].style.transition='transform 1.15s cubic-bezier(.4,0,.2,1) '+b.delay+'ms';
+  els[i].style.transform='translate(-50%,-50%) rotate('+(b.rot+40)+'deg) scale('+b.scale+')';
+  els[i].style.transition='transform 1.2s cubic-bezier(.3,.55,.4,1) '+b.delay+'ms';
  });
  setTimeout(function(){
   closeMenu();
@@ -649,8 +650,9 @@ function gotoPanel(sel,el){
   else {f.classList.remove('show');sh.classList.remove('show');var el2=document.querySelector(sel);if(el2)el2.scrollIntoView({behavior:'smooth'});}
   if(sel==='#films'||sel==='#images'){var tar=document.getElementById(sel.slice(1));if(sel==='#images'&&tar)tar.scrollIntoView();else if(sel==='#films')window.scrollTo(0,0);}
  },620);
- setTimeout(function(){v.style.opacity='0';v.style.visibility='hidden';v.innerHTML='';},1350);
+ setTimeout(function(){v.style.opacity='0';v.style.visibility='hidden';v.innerHTML='';},1420);
 }
+
 function goSearch(){gotoPanel('#films');}
 function goStar(){gotoPanel('#shelf');}
 /* 右滑打开菜单 */
