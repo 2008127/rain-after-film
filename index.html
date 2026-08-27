@@ -756,5 +756,20 @@ window.loadBooks();
 .status{margin-top:10px;font-size:13px}
 .mnote{color:#7f8497!important;font-size:11.5px!important;line-height:1.7!important;margin-top:8px}
 </style>
+<script>
+(function(){
+ document.addEventListener('DOMContentLoaded',function(){
+  ['shelf','bookMask','editMask'].forEach(function(id){var e=document.getElementById(id);if(e&&e.parentNode)e.parentNode.removeChild(e);});
+  document.querySelectorAll('a[onclick*="#shelf"],a[onclick*="goStar"],a.sm-item').forEach(function(a){var o=(a.getAttribute&&a.getAttribute('onclick'))||'';if(o.indexOf('shelf')>-1||o.indexOf('goStar')>-1)a.parentNode&&a.parentNode.removeChild(a);});
+  var mask=document.getElementById('modalMask');
+  if(mask){var mk=mask.querySelector('.modal');var mn=null;if(mk){var ns=mk.querySelectorAll('.mnote');for(var i=0;i<ns.length;i++){if(ns[i].textContent.indexOf('音乐管理')>-1){mn=ns[i];break;}}}if(mk&&mn){var ch=mk.childNodes;while(ch.length&&ch[0]!==mn)mk.removeChild(ch[0]);}}
+  window.loadBooks=function(){};window.renderShelf=function(){};window.renderMList=function(){};window.openBook=function(){};window.openEdit=function(){};window.saveEdit=function(){};window.addBook=function(){};window.delBook=function(){};window.autoGen=function(){};
+  function tryPlay(){var a=document.getElementById('bgm');if(!a)return;if(!a.getAttribute('src')){if(typeof curSong==='function'){var s=curSong();if(s&&s.u)a.src=s.u;}}if(a.paused)a.play().catch(function(){});}
+  tryPlay();
+  var onI=function(){tryPlay();document.removeEventListener('click',onI);document.removeEventListener('touchstart',onI);document.removeEventListener('keydown',onI);};
+  document.addEventListener('click',onI);document.addEventListener('touchstart',onI);document.addEventListener('keydown',onI);
+ });
+})();
+</script>
 </body>
 </html>
