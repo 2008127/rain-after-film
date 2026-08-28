@@ -539,7 +539,7 @@ document.getElementById('iq').addEventListener('keydown',e=>{if(e.key==='Enter')
 const scol=['#c0392b','#d35400','#f39c12','#27ae60','#16a085','#2980b9','#8e44ad','#e84393','#2c3e50','#6c5ce7'];
 function sEsc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function bookCover(x,i){var s=(x&&x.cover)?x.cover:('https://picsum.photos/seed/'+encodeURIComponent((x&&x.name)||'book'+(i||0))+'/400/560');return s;}
-function renderShelf(){const c=document.getElementById('shelfbooks');const b=window.BOOKS||[];
+function renderShelf(){const c=document.getElementById('shelfbooks');if(!c)return;const b=window.BOOKS||[];
   if(!b.length){c.innerHTML='<div style="color:#9c9ea6;align-self:center;">书架正在整理，稍后刷新看看 ✨</div>';return;}
   c.innerHTML=b.map((x,i)=>{const bg='url('+bookCover(x,i)+') center/cover no-repeat,linear-gradient(160deg,'+scol[(i+1)%scol.length]+','+scol[i%scol.length]+')';return '<div class="book" title="点击打开这本书" onclick="openBook('+i+')" style="background:'+bg+'"><span class="bt">'+sEsc(x.name)+'</span><span class="ba">'+sEsc(x.author||'佚名')+'</span></div>';}).join('');
 }
