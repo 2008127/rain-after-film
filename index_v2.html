@@ -807,5 +807,47 @@ window.startSearch=function(){var e=document.getElementById('searchPick');if(e)e
 window.startFilm=function(){var e=document.getElementById('searchPick');if(e)e.classList.remove('show');gotoPanel('#films');};
 window.startWall=function(){var e=document.getElementById('searchPick');if(e)e.classList.remove('show');gotoPanel('#wallpapers');};
 </script>
+
+<script>
+(function(){
+try{
+var D='https://kw-er.kuwo.cn/bd3caffe83a9b4a879750cdb76ab2051/6a905815/resource/30106/trackmedia/M500002uXHR52GMUVP.mp3';
+function $(id){return document.getElementById(id);}
+function show(el,on){if(el&&el.classList){if(on){el.classList.add('show');}else{el.classList.remove('show');}}}
+function gotoPanel(sel){
+  var f=$('films'),w=$('wallpapers');
+  if(sel==='#films'){show(f,true);show(w,false);}
+  else if(sel==='#wallpapers'){show(w,true);show(f,false);}
+  show($('searchPick'),false);
+  var mn=$('menuMask');if(mn){show(mn,false);}
+  try{window.scrollTo(0,0);}catch(e){}
+}
+window.gotoPanel=gotoPanel;
+window.startSearch=function(){show($('searchPick'),true);};
+window.startFilm=function(){gotoPanel('#films');};
+window.startWall=function(){gotoPanel('#wallpapers');};
+var sp=$('searchPick');
+if(sp){
+  var arr=sp.querySelectorAll('button');
+  for(var i=0;i<arr.length;i++){
+    var t=arr[i].textContent||'';
+    if(t.indexOf('电影')>-1){arr[i].onclick=function(){gotoPanel('#films');};}
+    else if(t.indexOf('壁纸')>-1){arr[i].onclick=function(){gotoPanel('#wallpapers');};}
+  }
+  sp.onclick=function(e){if(e&&e.target===sp){show(sp,false);}};
+}
+var bs=document.querySelectorAll('[onclick*="startSearch"]');
+for(var j=0;j<bs.length;j++){
+  bs[j].onclick=function(e){if(e&&e.preventDefault){e.preventDefault();}window.startSearch();};
+}
+var a=$('bgm');
+if(a&&!a.getAttribute('src')){a.setAttribute('src',D);try{a.load();}catch(e){}}
+function tryPlay(){try{var b=$('bgm');if(b&&b.paused){var p=b.play();if(p&&p.catch){p.catch(function(){});}}}catch(e){}}
+document.addEventListener('click',tryPlay,true);
+document.addEventListener('touchstart',function(){tryPlay();},true);
+document.addEventListener('keydown',function(){tryPlay();},true);
+}catch(e){}
+})();
+</script>
 </body>
 </html>
