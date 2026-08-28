@@ -727,33 +727,14 @@ async function saveMusicCloud(){var token=localStorage.getItem('rm_token')||'';i
 <script>
 (function(){
 function $(id){return document.getElementById(id);}
-function show(el,on){if(el&&el.classList){if(on){el.classList.add('show');}else{el.classList.remove('show');}}}
-window.gotoPanel=function(sel){
-  var f=$('films'),w=$('wallpapers');
-  if(sel==='#films'){show(f,true);show(w,false);}
-  else if(sel==='#wallpapers'){show(w,true);show(f,false);}
-  else{show(f,false);show(w,false);}
-  show($('searchPick'),false);
-  var mm=$('menuMask');if(mm){show(mm,false);}
-  var mx=$('sideMenu');if(mx){show(mx,false);}
-  if(sel==='#top'){try{window.scrollTo(0,0);}catch(e){}}
-};
-window.startSearch=function(){show($('searchPick'),true);};
+function showPanel(el,on){if(!el){return;}if(el.classList){if(on){el.classList.add('show');}else{el.classList.remove('show');}}}
+function showPick(on){var sp=document.getElementById('searchPick');if(sp){sp.style.display=(on?'flex':'none');}}
+function ensurePick(){var sp=document.getElementById('searchPick');if(sp){return sp;}sp=document.createElement('div');sp.id='searchPick';sp.style.cssText='position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);';sp.innerHTML='<div style="background:rgba(18,20,32,.97);border-radius:18px;padding:26px;text-align:center;max-width:320px;box-shadow:0 10px 40px rgba(0,0,0,.5)"><div style="font-size:18px;font-weight:700;margin-bottom:6px;color:#fff">想检索点什么？</div><div style="font-size:13px;color:#9aa0b4;margin-bottom:18px">选择一类，立即开始</div><div style="display:flex;gap:12px;justify-content:center"><button id="pkFilm" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#5b8cff,#7a5bff);color:#fff;font-size:15px;cursor:pointer">🎞️ 检索电影</button><button id="pkWall" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#ff8a5b,#ff5bd8);color:#fff;font-size:15px;cursor:pointer">🖼️ 检索壁纸</button></div></div>';document.body.appendChild(sp);var b1=document.getElementById('pkFilm');if(b1){b1.onclick=function(){window.gotoPanel('#films');};}var b2=document.getElementById('pkWall');if(b2){b2.onclick=function(){window.gotoPanel('#wallpapers');};}sp.onclick=function(e){if(e&&e.target===sp){showPick(false);}};return sp;}
+window.gotoPanel=function(sel){var f=document.getElementById('films'),w=document.getElementById('wallpapers');if(sel==='#films'){showPanel(f,true);showPanel(w,false);}else if(sel==='#wallpapers'){showPanel(w,true);showPanel(f,false);}else{showPanel(f,false);showPanel(w,false);}showPick(false);var mm=document.getElementById('menuMask');showPanel(mm,false);var mx=document.getElementById('sideMenu');showPanel(mx,false);if(sel==='#top'){try{window.scrollTo(0,0);}catch(e){}}};
+window.startSearch=function(){showPick(true);};
 window.startFilm=function(){window.gotoPanel('#films');};
 window.startWall=function(){window.gotoPanel('#wallpapers');};
-document.addEventListener('DOMContentLoaded',function(){
-  ['shelf','bookMask','editMask'].forEach(function(id){var e=$(id);if(e&&e.parentNode){e.parentNode.removeChild(e);}});
-  var links=document.querySelectorAll('a[onclick*="#shelf"],a[onclick*="goStar"]');
-  for(var i=0;i<links.length;i++){var o=(links[i].getAttribute('onclick')||'');if(o.indexOf('shelf')>-1||o.indexOf('goStar')>-1){if(links[i].parentNode){links[i].parentNode.removeChild(links[i]);}}}
-  var btns=document.querySelectorAll('[onclick*="startSearch"]');
-  for(var j=0;j<btns.length;j++){btns[j].onclick=function(e){if(e&&e.preventDefault){e.preventDefault();}window.startSearch();};}
-  var sp=$('searchPick');
-  if(sp){var arr=sp.querySelectorAll('button');for(var k=0;k<arr.length;k++){var t=arr[k].textContent||'';if(t.indexOf('电影')>-1){arr[k].onclick=function(){window.gotoPanel('#films');};}else if(t.indexOf('壁纸')>-1){arr[k].onclick=function(){window.gotoPanel('#wallpapers');};}}sp.onclick=function(e){if(e&&e.target===sp){show(sp,false);}};}
-  var tried=false;
-  function tryPlay(){if(tried){return;}try{var a=$('bgm');if(a&&a.paused){if(!a.getAttribute('src')){if(typeof curSong==='function'){var s=curSong();if(s&&s.u){a.src=s.u;}}}var p=a.play();if(p&&p.catch){p.catch(function(){});}}}catch(e){}}
-  function onFirst(){tryPlay();tried=true;document.removeEventListener('click',onFirst);document.removeEventListener('touchstart',onFirst);document.removeEventListener('keydown',onFirst);}
-  document.addEventListener('click',onFirst);document.addEventListener('touchstart',onFirst);document.addEventListener('keydown',onFirst);
-});
+document.addEventListener('DOMContentLoaded',function(){['shelf','bookMask','editMask'].forEach(function(id){var e=document.getElementById(id);if(e&&e.parentNode){e.parentNode.removeChild(e);}});var links=document.querySelectorAll('a[onclick*="#shelf"],a[onclick*="goStar"]');for(var i=0;i<links.length;i++){var o=(links[i].getAttribute('onclick')||'');if(o.indexOf('shelf')>-1||o.indexOf('goStar')>-1){if(links[i].parentNode){links[i].parentNode.removeChild(links[i]);}}}ensurePick();var btns=document.querySelectorAll('[onclick*="startSearch"]');for(var j=0;j<btns.length;j++){btns[j].onclick=function(e){if(e&&e.preventDefault){e.preventDefault();}window.startSearch();};}var tried=false;function tryPlay(){if(tried){return;}try{var a=document.getElementById('bgm');if(a&&a.paused){if(!a.getAttribute('src')){if(typeof curSong==='function'){var s=curSong();if(s&&s.u){a.src=s.u;}}}var p=a.play();if(p&&p.catch){p.catch(function(){});}}}catch(e){}}function onFirst(){tryPlay();tried=true;document.removeEventListener('click',onFirst);document.removeEventListener('touchstart',onFirst);document.removeEventListener('keydown',onFirst);}document.addEventListener('click',onFirst);document.addEventListener('touchstart',onFirst);document.addEventListener('keydown',onFirst);});
 })();
 </script>
 </body>
