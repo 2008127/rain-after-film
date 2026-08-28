@@ -309,7 +309,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
   <p class="sub">一场雨落之后，光影愈发清澈。我们用镜头收集每一道微光，<b>让每一帧都值得被记住</b>。<br>
    在这里，热爱电影的人聚在一起，看故事、造故事、也把青春拍成故事。</p>
   <div class="btn-row">
-    <a class="btn primary" href="#films">开始检索</a>
+    <a class="btn primary" href="javascript:void(0)" onclick="event.preventDefault();startSearch()">开始检索</a>
     <a class="btn ghost" href="#join">加入我们</a>
   </div>
 </section>
@@ -778,6 +778,30 @@ window.loadBooks();
   document.addEventListener('click',onI);document.addEventListener('touchstart',onI);document.addEventListener('keydown',onI);
  });
 })();
+</script>
+<style>
+.searchpick{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(8,10,16,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.searchpick.show{display:flex}
+.sp-box{background:linear-gradient(165deg,#1b2130,#0e1118);border:1px solid rgba(120,150,255,.16);border-radius:22px;padding:28px 26px 24px;width:min(400px,90%);text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.55)}
+.sp-title{font-size:20px;font-weight:700;color:#eef1ff;margin-bottom:6px}
+.sp-sub{font-size:13px;color:#8b90a3;margin-bottom:20px}
+.sp-btn{display:block;width:100%;margin:10px 0;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:600;color:#fff;cursor:pointer;transition:transform .15s,box-shadow .2s}
+.sp-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(108,123,255,.4)}
+.sp-film{background:linear-gradient(135deg,#6c7bff,#9c6bff)}
+.sp-wall{background:linear-gradient(135deg,#2aa88f,#5fc9a5)}
+</style>
+<div id="searchPick" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="sp-box">
+    <div class="sp-title">想检索点什么？</div>
+    <div class="sp-sub">选择一类，立即开始</div>
+    <button class="sp-btn sp-film" onclick="startFilm()">🎞️ 检索电影</button>
+    <button class="sp-btn sp-wall" onclick="startWall()">🖼️ 检索壁纸</button>
+  </div>
+</div>
+<script>
+window.startSearch=function(){var e=document.getElementById('searchPick');if(e)e.classList.add('show');};
+window.startFilm=function(){var e=document.getElementById('searchPick');if(e)e.classList.remove('show');gotoPanel('#films');};
+window.startWall=function(){var e=document.getElementById('searchPick');if(e)e.classList.remove('show');gotoPanel('#wallpapers');};
 </script>
 </body>
 </html>
