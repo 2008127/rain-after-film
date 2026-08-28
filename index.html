@@ -272,25 +272,7 @@ body{background-color:#33363c;background-image:repeating-linear-gradient(45deg,r
 .mb-act button:hover{background:rgba(255,255,255,.18)}
 
 </style>
-<script id="core">
-(function(){
-try{
-function goto2(sel){var f=document.getElementById('films'),w=document.getElementById('wallpapers');if(sel==='#films'){if(w){w.style.transform='translateX(100%)';w.style.visibility='hidden';}if(f){f.style.transform='translateX(0)';f.style.visibility='visible';document.documentElement.scrollTop=0;}}else if(sel==='#wallpapers'){if(f){f.style.transform='translateX(100%)';f.style.visibility='hidden';}if(w){w.style.transform='translateX(0)';w.style.visibility='visible';document.documentElement.scrollTop=0;}}else{if(f){f.style.transform='translateX(100%)';f.style.visibility='hidden';}if(w){w.style.transform='translateX(100%)';w.style.visibility='hidden';}}}
-function showPick(){var e=document.getElementById('searchPick');if(e){e.style.display='flex';}}
-function hidePick(){var e=document.getElementById('searchPick');if(e){e.style.display='none';}}
-window.startSearch=showPick;
-window.startFilm=function(){hidePick();goto2('#films');};
-window.startWall=function(){hidePick();goto2('#wallpapers');};
-window.gotoPanel=goto2;
-function autoPlay(){try{var a=document.getElementById('bgm');if(!a)return;if(!a.getAttribute('src')){var s=null;if(typeof curSong==='function'){try{s=curSong();}catch(e){}}if(s&&s.u)a.src=s.u;}if(a.paused){var p=a.play();if(p&&p.catch)p.catch(function(){});}}catch(e){}}
-function init(){try{var b=document.getElementById('startBtn');if(b){b.addEventListener('click',function(ev){if(ev&&ev.preventDefault)ev.preventDefault();showPick();});}
-var onI=function(){autoPlay();document.removeEventListener('click',onI);document.removeEventListener('touchstart',onI);document.removeEventListener('keydown',onI);};
-document.addEventListener('click',onI);document.addEventListener('touchstart',onI);document.addEventListener('keydown',onI);
-autoPlay();}catch(e){}}
-if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);
-}catch(e){}
-})();
-</script>
+
 </head>
 <body>
 <div class="bgfx"></div>
